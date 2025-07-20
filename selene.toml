@@ -2,3 +2,4 @@ std = "roblox"
 
 [lints]
 shadowing = "allow"
+incorrect_standard_library_use = "allow"

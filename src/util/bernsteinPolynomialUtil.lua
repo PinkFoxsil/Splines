@@ -21,9 +21,9 @@ end
 local bernsteinPolynomialUtil = {}
 
 function bernsteinPolynomialUtil.getBinomialCoefficent(n: number, k: number): number
-	local res = binomialTable.find(n, k)
-	if res then
-		return res
+	local prexistingRes = binomialTable.find(n, k)
+	if prexistingRes then
+		return prexistingRes
 	end
 
 	if n < k then
@@ -41,7 +41,7 @@ function bernsteinPolynomialUtil.getBinomialCoefficent(n: number, k: number): nu
 		return n
 	end
 
-	res = 1
+	local res = 1
 
 	for i = 1, k do
 		res *= (n + 1 - i) / i
@@ -52,7 +52,7 @@ function bernsteinPolynomialUtil.getBinomialCoefficent(n: number, k: number): nu
 end
 
 function bernsteinPolynomialUtil.getBasisPolynomial(n: number, v: number, val: number): number
-	return bernsteinPolynomialUtil.getBinomialCoefficent(n, v) * val^v * (1 - val)^(n - v)
+	return bernsteinPolynomialUtil.getBinomialCoefficent(n, v) * val ^ v * (1 - val) ^ (n - v)
 end
 
 function bernsteinPolynomialUtil.getBasisPolynomials(n: number, val: number): {}
@@ -65,19 +65,19 @@ function bernsteinPolynomialUtil.getBasisPolynomials(n: number, val: number): {}
 	return res
 end
 
-function bernsteinPolynomialUtil.getCumulativeBasisPolynomials(n: number, val: number): {}
+function bernsteinPolynomialUtil.getCumulativeBasisPolynomials(n: number, val: number): { number }
 	local res = {}
-	
+
 	for i = 0, n do
 		local sum = 0
-		
+
 		for j = i, n do
 			sum += bernsteinPolynomialUtil.getBasisPolynomial(n, j, val)
 		end
-		
+
 		table.insert(res, sum)
 	end
-	
+
 	return res
 end
 

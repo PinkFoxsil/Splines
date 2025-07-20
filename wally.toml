@@ -1,6 +1,6 @@
 [package]
-name = "antho/fox-assist"
-version = "0.1.0"
+name = "pinkfoxsil/splines"
+version = "1.0.0"
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
 

@@ -11,9 +11,9 @@ function cframeUtil.getCFrameRotationMatrix(cframe: CFrame): Matrix.Matrix<numbe
 	local zVect = cframe.ZVector
 
 	return Matrix.new({
-		{xVect.X, yVect.X, zVect.X},
-		{xVect.Y, yVect.Y, zVect.Y},
-		{xVect.Z, yVect.Z, zVect.Z}
+		{ xVect.X, yVect.X, zVect.X },
+		{ xVect.Y, yVect.Y, zVect.Y },
+		{ xVect.Z, yVect.Z, zVect.Z },
 	})
 end
 

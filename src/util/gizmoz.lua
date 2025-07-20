@@ -1,4 +1,4 @@
-local pointLine = script.PointLine
+local pointLine = script.Parent.Parent.assets
 local duckMesh = script.Duck
 
 local folder = Instance.new("Folder")
@@ -45,6 +45,7 @@ function gizmoz.createBox(position1: Vector3, position2: Vector3, properties: pa
 	local p1ToP2 = position2 - position1
 
 	local part = Instance.new("Part")
+	part.Name = name
 	part.Size = p1ToP2
 	part.Position = position1 + p1ToP2 / 2
 	part.Color = color
