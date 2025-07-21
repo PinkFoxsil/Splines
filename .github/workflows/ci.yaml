@@ -16,11 +16,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - uses: Roblox/setup-foreman@v3
-        name: Install Foreman
+      - uses: ok-nick/setup-aftman@v0.4.2
+        name: Install Aftman
         with:
-          version: "^1.0.0"
-          token: ${{ SECRETS.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Lint
         run: |
@@ -31,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: JohnnyMorganz/stylua-action@4.1.0
+      - uses: JohnnyMorganz/stylua-action@v4.1.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           args: --check .
