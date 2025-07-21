@@ -113,7 +113,7 @@ function SplineVisual.createFromDistance(
 	spline: Spline.Spline,
 	sampleAmount: number?,
 	distance: number?,
-	properties: { color: Color3?, transparency: number?, size: number? }?
+	properties: { color: Color3?, transparency: number?, diameter: number? }?
 ): SplineVisual
 	local newSampleAmount = sampleAmount or 20
 	local newDistance = distance or 1
@@ -250,14 +250,14 @@ local hues = {
 	z = 240,
 }
 
-function SplineVisual.createExtremaPoints(self: SplineVisual, spline: Spline.Spline, modelScale: number?)
+function SplineVisual.createExtremaPoints(spline: Spline.Spline, modelScale: number?): SplineVisual
 	local newModelScale = modelScale or 1
 	local splineVisual = SplineVisual.new()
 
 	local derivativeTs = spline:getDerivateZeros()
 	for axis, ts in derivativeTs do
 		for _, t in ts do
-			local pos = self:sampleTransform(t).position
+			local pos = spline:sampleTransform(t).position
 			local part =
 				gizmoz.createPointLine(pos, axises[axis], { hue = hues[axis], size = 5 }):ScaleTo(newModelScale)
 
@@ -268,8 +268,8 @@ function SplineVisual.createExtremaPoints(self: SplineVisual, spline: Spline.Spl
 	return splineVisual
 end
 
-function SplineVisual.animateRotation(spline: Spline.Spline, speed: number)
-	speed = speed or 1
+function SplineVisual.animateRotation(spline: Spline.Spline, speed: number?): SplineVisual
+	local newSpeed = speed or 1
 
 	local splineVisual = SplineVisual.new()
 
@@ -277,7 +277,7 @@ function SplineVisual.animateRotation(spline: Spline.Spline, speed: number)
 	table.insert(splineVisual.parts, duck)
 
 	splineVisual.updateFunction = function()
-		local t = (splineVisual.age * speed) % 1
+		local t = (splineVisual.age * newSpeed) % 1
 		splineVisual.parts[1].CFrame = spline:sampleCFrame(t)
 	end
 

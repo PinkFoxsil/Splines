@@ -303,7 +303,7 @@ function Quaternion.conjugate(self: Quaternion): Quaternion
 	return Quaternion.new(-self.x, -self.y, -self.z, self.w)
 end
 
-function canonicalized(quaternions: { Quaternion }): { Quaternion }
+function _canonicalized(quaternions: { Quaternion }): { Quaternion }
 	local res = {}
 
 	local p = Quaternion.unitQuaternion()
