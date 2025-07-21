@@ -15,12 +15,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - uses: ok-nick/setup-aftman@v0.4.2
-        name: Install Aftman
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
+      - name: Install Aftman
+        uses: ok-nick/setup-aftman@v0.4.2
       - name: Lint
         run: |
           selene ./src
@@ -30,7 +26,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: JohnnyMorganz/stylua-action@v4.1.0
+      - uses: JohnnyMorganz/stylua-action@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          version: latest
           args: --check .
