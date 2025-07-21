@@ -1,10 +1,8 @@
 --|| Modules ||--
-local Type = require("../Type")
 local Matrix = require("../mathLib/Matrix")
 local AABB = require("../mathLib/AABB")
 local Transform = require("../mathLib/Transform")
 local Quaternion = require("../mathLib/Quaternion")
-local arrayUtil = require("../util/arrayUtil")
 local mathUtil = require("../util/mathUtil")
 local cframeUtil = require("../util/cframeUtil")
 local transformUtil = require("../util/transformUtil")
@@ -20,19 +18,19 @@ local Spline = {}
 Spline.__index = Spline
 
 type SplineProperties = {
-	transforms: {Transform.Transform},
+	transforms: { Transform.Transform },
 	rotationType: Transform.RotationType,
-	rotations: {Transform.Rotation},
-	positions: {Transform.Position},
+	rotations: { Transform.Rotation },
+	positions: { Transform.Position },
 	rotationMatrix: Matrix.Matrix<Transform.Rotation>,
 	positionMatrix: Matrix.Matrix<Transform.Position>,
 	characteristicMatrix: Matrix.Matrix<number>?,
-	lookUpTable: {number}
+	lookUpTable: { number },
 }
 
-export type Spline = setmetatable<SplineProperties, typeof(Spline)>
+export type Spline = typeof(setmetatable({} :: SplineProperties, Spline))
 
-function Spline.new(transforms: {Transform.Transform}, characteristicMatrix: Matrix.Matrix<number>?): Spline
+function Spline.new(transforms: { Transform.Transform }, characteristicMatrix: Matrix.Matrix<number>?): Spline
 	local self = {}
 
 	self.transforms = transforms
@@ -42,6 +40,7 @@ function Spline.new(transforms: {Transform.Transform}, characteristicMatrix: Mat
 	self.rotationMatrix = Matrix.collum(self.rotations)
 	self.positionMatrix = Matrix.collum(self.positions)
 	self.characteristicMatrix = characteristicMatrix
+	self.lookUpTable = {}
 
 	return setmetatable(self, Spline)
 end
@@ -49,16 +48,16 @@ end
 function Spline.sampleCFrame(self: Spline, t: number): CFrame
 	assert(isInRange(t, 0, 1), getTOutOfRangeErrorMsg(t))
 	assert(self.rotationType == "Quaternion", "Can't sample a CFrame when the spline rotations are in 2D / 1-angle")
-	
+
 	local position = self:samplePosition(t)
 	local rotation = self:sampleRotation(t) :: Quaternion.Quaternion
-	
+
 	return CFrame.new(position) * cframeUtil.getCFrameFromQuaternion(rotation)
 end
 
 function Spline.sampleTransform(self: Spline, t: number): Transform.Transform
 	assert(isInRange(t, 0, 1), getTOutOfRangeErrorMsg(t))
-	
+
 	local position = self:samplePosition(t)
 	local rotation = self:sampleRotation(t)
 
@@ -69,7 +68,7 @@ function Spline.sampleRotation(self: Spline, t: number): Transform.Rotation
 	if self.rotationType == "Angle" then
 		return (self:getWeights(t) * self.rotationMatrix)[1][1]
 	else
-		
+		return 0
 	end
 end
 
@@ -86,33 +85,39 @@ function Spline.sampleTanget(self: Spline, t: number): Transform.Position
 end
 
 function Spline.getWeights(self: Spline, t: number): Matrix.Matrix<number>
-	return Matrix.row({1, t, t^2, t^3}) * self.characteristicMatrix
+	assert(self.characteristicMatrix, "No characteristic matrix!")
+
+	return Matrix.row({ 1, t, t ^ 2, t ^ 3 }) * self.characteristicMatrix
 end
 
 function Spline.getDerivativeWeights(self: Spline, t: number): Matrix.Matrix<number>
-	return Matrix.row({0, 1, 2*t, 3*t^2}) * self.characteristicMatrix
+	assert(self.characteristicMatrix, "No characteristic matrix!")
+
+	return Matrix.row({ 0, 1, 2 * t, 3 * t ^ 2 }) * self.characteristicMatrix
 end
 
 export type Coefficents = {
 	a: Transform.Position,
 	b: Transform.Position,
-	c: Transform.Position
+	c: Transform.Position,
 }
 
 function Spline.getCoefficents(self: Spline): Coefficents
+	assert(self.characteristicMatrix, "No characteristic matrix!")
+
 	local extremaMatrix = self.characteristicMatrix * self.positionMatrix
-	
+
 	return {
 		a = extremaMatrix[4][1] * 3,
 		b = extremaMatrix[3][1] * 2,
-		c = extremaMatrix[2][1]
+		c = extremaMatrix[2][1],
 	}
 end
 
 export type Extremas = {
-	x: number,
-	y: number,
-	z: number
+	x: { min: number, max: number },
+	y: { min: number, max: number },
+	z: { min: number, max: number },
 }
 
 function Spline.getTExtrema(self: Spline): Extremas
@@ -122,20 +127,20 @@ function Spline.getTExtrema(self: Spline): Extremas
 	return {
 		x = mathUtil.quadraticEquation(a.x, b.x, c.x),
 		y = mathUtil.quadraticEquation(a.y, b.y, c.y),
-		z = mathUtil.quadraticEquation(a.z, b.z, c.z)
+		z = mathUtil.quadraticEquation(a.z, b.z, c.z),
 	}
 end
 
 export type DerivativeZeros = {
-	x: {number},
-	y: {number},
-	z: {number}
+	x: { number },
+	y: { number },
+	z: { number },
 }
 
 function Spline.getDerivateZeros(self: Spline): DerivativeZeros
 	local tExtrema = self:getTExtrema()
 
-	local derivativeTValues = {x = {}, y = {}, z = {}}
+	local derivativeTValues = { x = {}, y = {}, z = {} }
 
 	for axis, range in tExtrema do
 		for _, t in range do
@@ -144,55 +149,55 @@ function Spline.getDerivateZeros(self: Spline): DerivativeZeros
 			end
 		end
 	end
-	
+
 	return derivativeTValues
 end
 
-function Spline.getEndPositions(self: Spline): {Transform.Position}
+function Spline.getEndPositions(self: Spline): { Transform.Position }
 	return {
 		self.positions[2],
-		self.positions[3]
+		self.positions[3],
 	}
 end
 
 function Spline.getBoundingBox(self: Spline): AABB.AABB
 	assert(#self.positions == 4, "can only get bounding box for a spline with 4 points")
 	local endPoints = self:getEndPositions()
-	
+
 	local aabb = AABB.fromVectors({
 		endPoints[1],
-		endPoints[2]
+		endPoints[2],
 	})
-	
+
 	local derivativeTs = self:getDerivateZeros()
-	
+
 	-- Get derivativeTs positions
-	local derivativeAxisValues = {x = {}, y = {}, z = {}}
+	local derivativeAxisValues = { x = {}, y = {}, z = {} }
 	for axis, ts in derivativeTs do
 		for _, t in ts do
 			local pos = self:samplePosition(t)
 			table.insert(derivativeAxisValues[axis], pos[axis])
 		end
 	end
-	
+
 	for axis, values in derivativeAxisValues do
 		aabb:updateAxisValues(axis, values)
 	end
-	
+
 	return aabb
 end
 
-function Spline.setLookUpTable(self: Spline, sampleAmount: number): {number}
-	local newLookUpTable = {0}
+function Spline.setLookUpTable(self: Spline, sampleAmount: number): { number }
+	local newLookUpTable = { 0 }
 
 	local lastPosition = self:samplePosition(0)
-	
+
 	for i = 1, sampleAmount do
 		local position = self:samplePosition(i / sampleAmount)
-		
+
 		local distance = (position - lastPosition).magnitude + newLookUpTable[i]
 
-		newLookUpTable[i+1] = distance
+		newLookUpTable[i + 1] = distance
 		lastPosition = position
 	end
 
@@ -200,7 +205,7 @@ function Spline.setLookUpTable(self: Spline, sampleAmount: number): {number}
 	return self.lookUpTable
 end
 
-function Spline.getLookUpTable(self: Spline, sampleAmount: number?): {number}
+function Spline.getLookUpTable(self: Spline, sampleAmount: number?): { number }
 	return self.lookUpTable or self:setLookUpTable(sampleAmount or defaultSampleAmount)
 end
 
@@ -208,9 +213,9 @@ function Spline.distToT(self: Spline, dist: number, sampleAmount: number?): numb
 	local LUT = self:getLookUpTable(sampleAmount)
 
 	for i = 1, #LUT - 1 do
-		if LUT[i] <= dist and dist < LUT[i+1] then
-			local lerp = (dist - LUT[i]) / (LUT[i+1] - LUT[i])
-			return ((1-lerp)*(i-1) + lerp*i) / (#LUT-1)
+		if LUT[i] <= dist and dist < LUT[i + 1] then
+			local lerp = (dist - LUT[i]) / (LUT[i + 1] - LUT[i])
+			return ((1 - lerp) * (i - 1) + lerp * i) / (#LUT - 1)
 		end
 	end
 
@@ -219,7 +224,7 @@ end
 
 function Spline.getLength(self: Spline, sampleAmount: number?): number
 	local LUT = self:getLookUpTable(sampleAmount)
-	
+
 	return LUT[#LUT]
 end
 
