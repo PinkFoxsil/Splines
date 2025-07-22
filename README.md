@@ -11,12 +11,12 @@ before attempting to use this service: https://youtu.be/jvPPXbo87ds
 
 ## How To Use
 
-Create the spline you want to use by doing SplineService:createSplineName()
-Then to get a point along the spline do spline:sample(t) where t is a value between 0 and 1.
-t values aren't equally distant around corners of a spline, if you wish to get equal distance
-then use spline:distToT().
+Create the spline you want to use by doing `SplineService:createSplineName()`
+Then to get a point along the spline do `spline:sample(t)` where t is a value between 0 and 1.
+Equally spaced t values do not give equally spaced positions, if you wish to get equal distance
+then use `spline:distToT()`.
 
-```
+```lua
 local bezierSpline = SplineService:createBezier({
   Vector3.new(0, 0, 10),
   Vector3.new(3.3, 3.3, 12.5),
