@@ -23,16 +23,16 @@ local bezierSpline = SplineService:createBezier({
   Vector3.new(6.6, 6.6, 7.5),
   Vector3.new(10, 10, 10)
 })
-```
 
 bezierSpline:sample(0.5)
 
 local distanceT = bezierSpline:distToT(2)
 bezierSpline:sample(distanceT)
+```
 
-To help with understanding and debugging, use SplineService:viewSpline() or other relative
+To help with understanding and debugging, use `SplineService:viewSpline()` or other relative
 visual functions.
 
-If you want to connect multiple splines, use SplineService:createPath(splines).
+If you want to connect multiple splines, use `SplineService:createPath(splines)`.
 If you want to automatically create a smooth path between multiple
-points, use SplineService:createCatmullRomPath(splines).
+points, use `SplineService:createCatmullRomPath(splines)`.
