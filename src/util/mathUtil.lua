@@ -1,8 +1,10 @@
 local mathUtil = {}
 
 function mathUtil.quadraticEquation(a: number, b: number, c: number): { min: number, max: number }
-	local sqrt = math.sqrt(b ^ 2 - 4 * a * c)
-	local inverseA2 = 1 / a * 2
+	assert(a ~= 0, "Value a cannot be equal to 0")
+
+	local sqrt = math.sqrt(b * b - 4 * a * c)
+	local inverseA2 = 1 / (a * 2)
 
 	return {
 		min = (-b - sqrt) * inverseA2,

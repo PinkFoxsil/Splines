@@ -6,7 +6,13 @@
 
     "ServerScriptService": {
       "SplineService": {
-        "$path": "src"
+        "$className": "Folder",
+        "DevPackages": {
+          "$path": "DevPackages"
+        },
+        "src": {
+          "$path": "src"
+        }
       }
     }
   }
