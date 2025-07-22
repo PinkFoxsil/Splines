@@ -1,0 +1,2 @@
+selene ./src
+stylua .
