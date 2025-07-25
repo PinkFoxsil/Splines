@@ -1,6 +1,5 @@
 {
   "name": "Splines",
-  "globIgnorePaths": ["**/*.spec.lua"],
   "tree": {
     "$className": "DataModel",
 

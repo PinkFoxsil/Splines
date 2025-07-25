@@ -1,0 +1,7 @@
+{
+  "name": "Splines",
+  "globIgnorePaths": ["**/*.spec.lua", "*.config.lua"],
+  "tree": {
+    "$path": "src"
+  }
+}

@@ -1,5 +1,4 @@
-set -e
+OUTPUT=SplinesTest.rbxl
 
-rojo build -o Splines.rbxl
-run-in-roblox --place Splines.rbxl --script scripts/run-tests.lua
-rm Splines.rbxl
+rojo build --output $OUTPUT
+run-in-roblox --place $OUTPUT --script scripts/run-tests.lua

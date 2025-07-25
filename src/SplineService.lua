@@ -17,14 +17,14 @@ type SplineInput = Vector2 | Vector3 | CFrame | Transform.Transform
 --|| Main ||--
 local SplineService = {}
 
--- Transform for optomized splines:
+-- Transform for optimized splines:
 
 SplineService.newTransfrom = Transform.new
 
 -- Creating Splines:
 
 -- Linear splines are simply the lerp between 2 points.
--- Usefull for when interpolation doesn't matter.
+-- Useful for when interpolation doesn't matter.
 function SplineService.createLinear(positions: { SplineInput }): Linear.Linear
 	assert(#positions == 2, "Linear splines take 2 positions")
 	local transforms = transformUtil.getTransforms(positions)
@@ -32,7 +32,7 @@ function SplineService.createLinear(positions: { SplineInput }): Linear.Linear
 	return Linear.new(transforms)
 end
 
--- Beizer splines take 2 to an infinate amount of points.
+-- Bézier splines take 2 to an infinite amount of points.
 -- 1st point is the start, last point it the end.
 -- Use cases: shapes, fonts, and Vector Graphics.
 function SplineService.createBezier(positions: { SplineInput }): Bezier.Bezier
@@ -53,7 +53,7 @@ end
 
 -- Catmull-Rom splines take exactly 4 points.
 -- 2nd point is the start, 3rd point is the end.
--- Use cases: aniamtion and path smoothing.
+-- Use cases: animation and path smoothing.
 function SplineService.createCatmullRom(positions: { SplineInput }): CatmullRom.CatmullRom
 	assert(#positions == 4, "Catmull-Rom splines take 4 points")
 	local transforms = transformUtil.getTransforms(positions)
@@ -63,7 +63,7 @@ end
 
 -- Cardinal splines take exactly 4 points.
 -- 2nd point is the start, 3rd point is the end.
--- Cardinal splines are flexiable versions of the Catmull-Rom, allowing
+-- Cardinal splines are flexible versions of the Catmull-Rom, allowing
 -- you to specify how the curve smooths with scale.
 function SplineService.createCardinal(positions: { SplineInput }, scale: number): Cardinal.Cardinal
 	assert(#positions == 4, "Cardinal splines take 4 points")

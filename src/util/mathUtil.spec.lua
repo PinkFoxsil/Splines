@@ -1,29 +1,30 @@
-local JestGlobals = require(script.Parent.Parent.Parent.Parent.DevPackages.JestGlobals)
+local JestGlobals = require(script.Parent.Parent.Parent.DevPackages.JestGlobals)
 
 local it = JestGlobals.it
 local expect = JestGlobals.expect
 local describe = JestGlobals.describe
 
-local mathUtil = require(script.Parent.Parent.Parent.util.mathUtil)
+local mathUtil = require(script.Parent.mathUtil)
 
 describe("quadraticEquation", function()
-	it("finds the min and max of a = 5, b = 6, and c = 1 to be -1 and -0.2 respectivly", function()
+	it("finds the min and max of a = 5, b = 6, and c = 1 to be -1 and -0.2 respectively", function()
 		expect(mathUtil.quadraticEquation(5, 6, 1)).toEqual({
 			min = -1,
 			max = -0.2,
 		})
 	end)
 
-	it("finds the min and max of a = -5, b = 6, and c = 1 to be near 1.35 and -0.15 respectivly", function()
+	it("finds the min and max of a = -5, b = 6, and c = 1 to be near 1.35 and -0.15 respectively", function()
 		local res = mathUtil.quadraticEquation(-5, 6, 1)
 		expect(res.min).toBeCloseTo(1.3483314, 3)
 		expect(res.max).toBeCloseTo(-0.1483314, 3)
 	end)
 
-	it("throws an error when a == 0", function()
-		expect(function()
-			return mathUtil.quadraticEquation(0, 1, 1)
-		end).toThrow("Value 'a' cannot be equal to 0")
+	it("Doesn't error when numbers are 0", function()
+		expect(mathUtil.quadraticEquation(0, 0, 0)).toEqual({
+			min = -0,
+			max = 0,
+		})
 	end)
 end)
 

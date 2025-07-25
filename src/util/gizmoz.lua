@@ -1,10 +1,14 @@
+--|| Services ||--
+local InsertService = game:GetService("InsertService")
+
+--|| Varaiables ||--
 local pointLine = script.Parent.Parent.assets
-local duckMesh = script.Duck
 
 local folder = Instance.new("Folder")
 folder.Name = "Gizmoz"
 folder.Parent = workspace
 
+--|| Types ||--
 type partProperties = {
 	color: Color3?,
 	transparency: number?,
@@ -12,6 +16,7 @@ type partProperties = {
 	name: string?,
 }
 
+--|| Main ||--
 local gizmoz = {}
 
 function gizmoz.createSphere(position: Vector3, properties: { diameter: number? } & partProperties): Part
@@ -128,7 +133,19 @@ function gizmoz.createPointLine(
 end
 
 function gizmoz.createDuck(cframe: CFrame): MeshPart
-	local duck = duckMesh:Clone()
+	local duck
+
+	local success, model = pcall(InsertService.LoadAsset, InsertService, 5134201685)
+
+	if success then
+		duck = model:FindFirstChildOfClass("MeshPart")
+	else
+		duck = Instance.new("MeshPart")
+	end
+
+	duck.Size = Vector3.new(0.93, 0.99, 1.341)
+	duck.CanCollide = false
+	duck.Anchored = true
 	duck.CFrame = cframe
 	duck.Parent = folder
 

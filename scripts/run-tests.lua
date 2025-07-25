@@ -1,7 +1,6 @@
 local ServerScriptService = game:GetService("ServerScriptService")
 local root = ServerScriptService.SplineService
-local packages = root.DevPackages
-local Jest = require(packages.Jest)
+local Jest = require(root.DevPackages.Jest)
 
 local runCLI = Jest.runCLI
 
@@ -9,8 +8,10 @@ local processServiceExists, ProcessService = pcall(function()
 	return game:GetService("ProcessService")
 end)
 
+-- https://discord.com/channels/385151591524597761/1217881206884929706/1372514179776516228
+
 local status, result = runCLI(root.src, {
-	verbose = false,
+	verbose = true,
 	ci = false,
 }, { root.src }):awaitStatus()
 
